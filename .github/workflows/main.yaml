@@ -48,15 +48,15 @@ jobs:
       - name: Deploy files to EC2
         run: |
           # Ensure the remote directory exists and has the correct ownership
-          ssh -o StrictHostKeyChecking=no ubuntu@51.20.253.232 "sudo mkdir -p /var/www/html && sudo chown ubuntu:ubuntu /var/www/html"
+          ssh -o StrictHostKeyChecking=no ubuntu@13.51.165.251 "sudo mkdir -p /var/www/html && sudo chown ubuntu:ubuntu /var/www/html"
           
           # Deploy the files (adjust path as necessary)
-          rsync -avz --exclude='.git*' --exclude='node_modules' --delete ./Abu.html ubuntu@51.20.253.232:/var/www/html/
+          rsync -avz --exclude='.git*' --exclude='node_modules' --delete ./Abu.html ubuntu@13.51.165.251:/var/www/html/
 
       # Step 7: Restart Apache to apply changes
       - name: Restart Apache
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@51.20.253.232 "sudo systemctl restart apache2"
+          ssh -o StrictHostKeyChecking=no ubuntu@13.51.165.251 "sudo systemctl restart apache2"
 
       # Step 8: Remove the GitHub runner IP from the EC2 security group after deployment
       - name: Remove IP from Security Group

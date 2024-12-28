@@ -20,7 +20,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-north-1  # Specify your region here
+          aws-region: us-east-1  # Specify your region here
 
       # Step 3: Get the public IP of the GitHub runner
       - name: Get GitHub runner public IP
@@ -32,7 +32,7 @@ jobs:
       - name: Add IP to Security Group
         run: |
           aws ec2 authorize-security-group-ingress \
-            --region eu-north-1 \
+            --region us-east-1 \
             --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
@@ -48,21 +48,21 @@ jobs:
       - name: Deploy files to EC2
         run: |
           # Ensure the remote directory exists and has the correct ownership
-          ssh -o StrictHostKeyChecking=no ubuntu@51.20.107.113 "sudo mkdir -p /var/www/html && sudo chown ubuntu:ubuntu /var/www/html"
+          ssh -o StrictHostKeyChecking=no ubuntu@54.163.40.76 "sudo mkdir -p /var/www/html && sudo chown ubuntu:ubuntu /var/www/html"
           
           # Deploy the files (adjust path as necessary)
-          rsync -avz --exclude='.git*' --exclude='node_modules' --delete ./Abu.html ubuntu@51.20.107.113:/var/www/html/
+          rsync -avz --exclude='.git*' --exclude='node_modules' --delete ./Abu.html ubuntu@54.163.40.76:/var/www/html/
 
       # Step 7: Restart Apache to apply changes
       - name: Restart Apache
         run: |
-          ssh -o StrictHostKeyChecking=no ubuntu@51.20.107.113 "sudo systemctl restart apache2"
+          ssh -o StrictHostKeyChecking=no ubuntu@54.163.40.76 "sudo systemctl restart apache2"
 
       # Step 8: Remove the GitHub runner IP from the EC2 security group after deployment
       - name: Remove IP from Security Group
         run: |
           aws ec2 revoke-security-group-ingress \
-            --region eu-north-1 \
+            --region us-east-1 \
             --group-id ${{ secrets.EC2_SECURITY_GROUP_ID }} \
             --protocol tcp \
             --port 22 \
